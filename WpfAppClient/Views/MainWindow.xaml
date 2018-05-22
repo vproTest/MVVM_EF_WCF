@@ -1,0 +1,90 @@
+﻿<Window x:Class="WpfAppClient.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppClient"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="600" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:MyConverterClass x:Key="MyConverter" />
+    </Window.Resources>
+    <Grid>        
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ListView Name="ListViewMovies" ItemsSource="{Binding Movies, Mode=TwoWay, IsAsync=True, 
+           UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedMovie, Mode=TwoWay, IsAsync=True, 
+           UpdateSourceTrigger=PropertyChanged}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                   <StackPanel Orientation="Vertical" Margin="5" Width="150">
+                        <Image Stretch="UniformToFill" Source="{Binding Picture}"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="16" Text="{Binding Name}" Foreground="Coral"/><!--, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged-->
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock TextWrapping="Wrap" FontSize="14" Text="Рейтинг: "/>
+                            <TextBlock TextWrapping="Wrap" FontSize="14" Text="{Binding Rating}"/> <!--, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged-->                        
+                        </StackPanel>
+                        <Border Background="Aquamarine" CornerRadius="4">
+                            <StackPanel Margin="3" Orientation="Horizontal">
+                                <TextBlock TextWrapping="Wrap" FontSize="16" Text="Год выпуска: "/>
+                                <TextBlock TextWrapping="Wrap" FontSize="16" Foreground="Green" Text="{Binding Year}"/> <!--, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged-->                            
+                            </StackPanel>
+                        </Border>                      
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+
+        </ListView>
+        <Grid Grid.Row="1" Name="GridAdmin">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Vertical">
+                <DockPanel Margin="5">
+                    <Label DockPanel.Dock="Left" Width="80">Название</Label>
+                    <TextBox Name="TbName" Text="{Binding SelectedMovie.Name, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <Label DockPanel.Dock="Left" Width="80">Год выпуска</Label>
+                    <TextBox Name="TbYear" Text="{Binding SelectedMovie.Year, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <DockPanel Margin="5">
+                    <Label DockPanel.Dock="Left" Width="80">Рейтинг</Label>
+                    <TextBox Name="TbRating" Text="{Binding SelectedMovie.Rating, UpdateSourceTrigger=PropertyChanged}"/>
+                </DockPanel>
+                <DockPanel LastChildFill="False" Margin="5">
+                    <Button Margin="5" Content="Удалить" DockPanel.Dock="Right" Command="{Binding DelCommand}" />
+                    <Button Margin="5" Content="Редактировать" DockPanel.Dock="Right" Command="{Binding EditCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ResourceKey=MyConverter}">
+                                <Binding ElementName="TbName" Path="Text" />
+                                <Binding ElementName="TbYear" Path="Text" />
+                                <Binding ElementName="TbRating" Path="Text" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Margin="5" Content="Добавить" DockPanel.Dock="Right" Command="{Binding AddCommand}">
+                          <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ResourceKey=MyConverter}">
+                                <Binding ElementName="TbName" Path="Text" />
+                                <Binding ElementName="TbYear" Path="Text" />
+                                <Binding ElementName="TbRating" Path="Text" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Margin="5" Content="Картинка" DockPanel.Dock="Left" Command="{Binding SelectImage}" />
+                </DockPanel>
+            </StackPanel>
+            <Image Margin="5" Grid.Column="1" Source="{Binding SelectedMovie.Picture}" />
+        </Grid>
+    </Grid>
+</Window>
